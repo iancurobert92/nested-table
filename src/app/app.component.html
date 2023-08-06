@@ -28,7 +28,7 @@
           (change)="onBodyRowCheckboxValueChange(bodyRow)"
         />
       </td>
-      <td [ngStyle]="{ 'padding-left.px': level * 20 }">
+      <td [ngStyle]="{ 'padding-left.px': level * 14 }">
         {{ row.name }}
         <div class="btn btn-sm" (click)="toggleRow(bodyRow)" *ngIf="row.children">
           <i class="bi" [ngClass]="bodyRow.isExpanded ? 'bi-arrow-down-short' : 'bi-arrow-right-short'"></i>
@@ -38,13 +38,20 @@
       <td>{{ row.email }}</td>
       <td>{{ row.phoneNo }}</td>
       <td>{{ row.companyName }}</td>
+      <td>
+        <div class="overlay">
+          <button class="btn btn-sm btn-primary pe-auto me-2" *ngIf="level === 0">Edit</button>
+          <button class="btn btn-sm btn-danger pe-auto">Delete</button>
+        </div>
+      </td>
     </tr>
 
     <ng-container *ngFor="let childRow of row.children">
       <ng-container
         [ngTemplateOutlet]="rowTemplate"
         [ngTemplateOutletContext]="{ row: childRow, parent: bodyRow, level: bodyRow.level + 1 }"
-      ></ng-container>
+      >
+      </ng-container>
     </ng-container>
   </ng-template>
 </table>

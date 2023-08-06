@@ -1,4 +1,13 @@
-import { Directive, ElementRef, HostListener, Input, OnInit, Renderer2, ViewContainerRef } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  HostListener,
+  Input,
+  OnInit,
+  Renderer2,
+  TemplateRef,
+  ViewContainerRef,
+} from '@angular/core';
 
 @Directive({
   selector: '[nestedTableBodyRow]',
@@ -17,7 +26,7 @@ export class NestedTableBodyRowDirective implements OnInit {
   @Input()
   isVisible: boolean = false;
 
-  constructor(private el: ElementRef, private renderer: Renderer2) {}
+  constructor(private el: ElementRef, private renderer: Renderer2, private vcRef: ViewContainerRef) {}
 
   @HostListener('mouseover')
   onMouseOver() {
