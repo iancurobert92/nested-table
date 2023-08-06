@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, OnInit, Renderer2, ViewContainerRef } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input, OnInit, Renderer2, ViewContainerRef } from '@angular/core';
 
 @Directive({
   selector: '[nestedTableBodyRow]',
@@ -17,9 +17,21 @@ export class NestedTableBodyRowDirective implements OnInit {
   @Input()
   isVisible: boolean = false;
 
-  constructor(private element: ElementRef, private renderer: Renderer2) {}
+  constructor(private el: ElementRef, private renderer: Renderer2) {}
 
-  ngOnInit() {}
+  @HostListener('mouseover')
+  onMouseOver() {
+    this.renderer.setStyle(this.el.nativeElement, 'background-color', '#eee');
+  }
+
+  @HostListener('mouseout')
+  onMouseOut() {
+    this.renderer.setStyle(this.el.nativeElement, 'background-color', '#fff');
+  }
+
+  ngOnInit() {
+    this.renderer.setStyle(this.el.nativeElement, 'background-color', '#fff');
+  }
 
   expand() {
     this.isExpanded = true;
@@ -35,11 +47,11 @@ export class NestedTableBodyRowDirective implements OnInit {
 
   hide() {
     this.isVisible = false;
-    this.renderer.setStyle(this.element.nativeElement, 'display', 'none');
+    this.renderer.setStyle(this.el.nativeElement, 'display', 'none');
   }
 
   show() {
     this.isVisible = true;
-    this.renderer.setStyle(this.element.nativeElement, 'display', 'table-row');
+    this.renderer.setStyle(this.el.nativeElement, 'display', 'table-row');
   }
 }
