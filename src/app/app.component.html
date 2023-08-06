@@ -1,4 +1,14 @@
-<table class="table">
+<form [formGroup]="form">
+  <input
+    class="form-control mr-sm-2"
+    type="search"
+    placeholder="Search by name"
+    aria-label="Search"
+    [formControl]="nameForm"
+  />
+</form>
+
+<table class="table mt-3">
   <thead>
     <tr>
       <th>
@@ -9,11 +19,12 @@
       <th>Email</th>
       <th>Phone Number</th>
       <th>Company Name</th>
+      <th></th>
     </tr>
   </thead>
 
   <tbody>
-    <ng-container *ngFor="let row of data$ | async">
+    <ng-container *ngFor="let row of searchResults">
       <ng-container [ngTemplateOutlet]="rowTemplate" [ngTemplateOutletContext]="{ row, level: 0 }"></ng-container>
     </ng-container>
   </tbody>

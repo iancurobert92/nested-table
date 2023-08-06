@@ -1,22 +1,25 @@
 import {
-  Component,
-  ContentChildren,
-  QueryList,
-  AfterContentInit,
   AfterViewInit,
-  ViewChildren,
+  ChangeDetectorRef,
+  Component,
   ElementRef,
+  OnInit,
+  QueryList,
   ViewChild,
+  ViewChildren,
 } from '@angular/core';
-import { TableService } from './services';
+import { FormBuilder, FormControl } from '@angular/forms';
+import { debounceTime } from 'rxjs';
+import { Entity } from './models/entity';
 import { NestedTableBodyRowDirective } from './nested-table/nested-table-body-row.directive';
+import { TableService } from './services';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit {
   @ViewChildren(NestedTableBodyRowDirective)
   rows?: QueryList<NestedTableBodyRowDirective>;
 
@@ -26,9 +29,31 @@ export class AppComponent implements AfterViewInit {
   @ViewChildren('bodyRowCheckbox')
   bodyRowCheckboxes?: QueryList<ElementRef<HTMLInputElement>>;
 
-  data$ = this.tableService.getData();
+  data: Entity[] = [];
 
-  constructor(private tableService: TableService) {}
+  searchResults: Entity[] = [];
+
+  form = this.fb.group({
+    name: '',
+  });
+
+  get nameForm(): FormControl {
+    return this.form.get('name') as FormControl;
+  }
+
+  constructor(private tableService: TableService, private fb: FormBuilder, private cdRef: ChangeDetectorRef) {}
+
+  ngOnInit(): void {
+    this.tableService.getData().subscribe((value) => {
+      this.data = value;
+      this.searchResults = [...this.data];
+      console.log(value);
+    });
+
+    this.form.valueChanges.pipe(debounceTime(500)).subscribe((formValue: any) => {
+      this.onSearch(formValue.name);
+    });
+  }
 
   ngAfterViewInit(): void {
     this.initRowsState();
@@ -77,6 +102,7 @@ export class AppComponent implements AfterViewInit {
       }
     }
   }
+
   private toggleRowsRecursively(rootRow: NestedTableBodyRowDirective) {
     if (!this.rows) return;
 
@@ -94,6 +120,41 @@ export class AppComponent implements AfterViewInit {
           this.toggleRow(row);
         }
       }
+    }
+  }
+
+  private onSearch(name: string) {
+    name = name.trim();
+
+    this.searchResults = [];
+
+    if (name === '') {
+      this.searchResults = [...this.data];
+
+      this.cdRef.detectChanges();
+
+      this.initRowsState();
+
+      return;
+    }
+
+    this.data.forEach((entity: Entity) => this.searchEntityByName(name, entity));
+
+    this.cdRef.detectChanges();
+
+    this.initRowsState();
+  }
+
+  searchEntityByName(name: string, entity: any) {
+    const searchName = name.toLowerCase();
+    const entityName = entity.name.toLowerCase();
+
+    if (entityName.includes(searchName)) {
+      this.searchResults.push(entity);
+    }
+
+    if (entity.children) {
+      entity.children.forEach((child: any) => this.searchEntityByName(name, child));
     }
   }
 }
