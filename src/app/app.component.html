@@ -1,7 +1,9 @@
 <table class="table">
   <thead>
     <tr>
-      <th>#</th>
+      <th>
+        <input #headerRowCheckbox class="form-check-input" type="checkbox" (change)="onHeaderCheckboxValueChange()" />
+      </th>
       <th>Name</th>
       <th>Name</th>
       <th>Email</th>
@@ -18,7 +20,14 @@
 
   <ng-template #rowTemplate let-row="row" let-parent="parent" let-level="level">
     <tr nestedTableBodyRow #bodyRow="nestedTableBodyRow" [parent]="parent" [level]="level">
-      <td>#</td>
+      <td>
+        <input
+          #bodyRowCheckbox
+          class="form-check-input"
+          type="checkbox"
+          (change)="onBodyRowCheckboxValueChange(bodyRow)"
+        />
+      </td>
       <td [ngStyle]="{ 'padding-left.px': level * 20 }">
         {{ row.name }}
         <div class="btn btn-sm" (click)="toggleRow(bodyRow)" *ngIf="row.children">
