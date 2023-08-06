@@ -28,12 +28,12 @@ export class NestedTableBodyRowDirective implements OnInit {
 
   constructor(private el: ElementRef, private renderer: Renderer2, private vcRef: ViewContainerRef) {}
 
-  @HostListener('mouseover')
+  @HostListener('mouseenter')
   onMouseOver() {
     this.renderer.setStyle(this.el.nativeElement, 'background-color', '#eee');
   }
 
-  @HostListener('mouseout')
+  @HostListener('mouseleave')
   onMouseOut() {
     this.renderer.setStyle(this.el.nativeElement, 'background-color', '#fff');
   }
