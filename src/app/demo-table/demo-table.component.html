@@ -20,7 +20,9 @@
         <th>Email</th>
         <th>Phone Number</th>
         <th>Company Name</th>
-        <th></th>
+        <div class="header-row-options" *ngIf="headerRowCheckbox.indeterminate || headerRowCheckbox.checked">
+          <button class="btn btn-sm btn-danger pe-auto">Delete multiple</button>
+        </div>
       </tr>
     </thead>
 
@@ -50,12 +52,10 @@
         <td>{{ row.email }}</td>
         <td>{{ row.phoneNo }}</td>
         <td>{{ row.companyName }}</td>
-        <td>
-          <div class="overlay" *ngIf="!headerRowCheckbox.indeterminate && !headerRowCheckbox.checked">
-            <button class="btn btn-sm btn-primary pe-auto me-2" *ngIf="level === 0">Edit</button>
-            <button class="btn btn-sm btn-danger pe-auto">Delete</button>
-          </div>
-        </td>
+        <div class="body-row-options" *ngIf="!headerRowCheckbox.indeterminate && !headerRowCheckbox.checked">
+          <button class="btn btn-sm btn-primary pe-auto me-2" *ngIf="level === 0">Edit</button>
+          <button class="btn btn-sm btn-danger pe-auto">Delete</button>
+        </div>
       </tr>
 
       <ng-container *ngFor="let childRow of row.children">
