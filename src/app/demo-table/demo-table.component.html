@@ -51,7 +51,7 @@
         <td>{{ row.phoneNo }}</td>
         <td>{{ row.companyName }}</td>
         <td>
-          <div class="overlay">
+          <div class="overlay" *ngIf="!headerRowCheckbox.indeterminate && !headerRowCheckbox.checked">
             <button class="btn btn-sm btn-primary pe-auto me-2" *ngIf="level === 0">Edit</button>
             <button class="btn btn-sm btn-danger pe-auto">Delete</button>
           </div>
