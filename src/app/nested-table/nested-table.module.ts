@@ -7,7 +7,7 @@ const directives = [NestedTableBodyRowDirective, NestedTableHeaderResizeDirectiv
 
 @NgModule({
   imports: [CommonModule],
-  declarations: [directives],
-  exports: [directives],
+  declarations: [...directives],
+  exports: [...directives],
 })
 export class NestedTableModule {}
