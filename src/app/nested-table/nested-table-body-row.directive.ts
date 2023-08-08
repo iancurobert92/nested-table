@@ -1,13 +1,4 @@
-import {
-  Directive,
-  ElementRef,
-  HostListener,
-  Input,
-  OnInit,
-  Renderer2,
-  TemplateRef,
-  ViewContainerRef,
-} from '@angular/core';
+import { Directive, ElementRef, HostListener, Input, OnInit, Renderer2, ViewContainerRef } from '@angular/core';
 
 @Directive({
   selector: '[nestedTableBodyRow]',
@@ -26,20 +17,24 @@ export class NestedTableBodyRowDirective implements OnInit {
   @Input()
   isVisible: boolean = false;
 
+  readonly BACKGROUND_COLOR_DEFAULT = '#fff';
+
+  readonly BACKGROUND_COLOR_HOVER = '#fff';
+
   constructor(private el: ElementRef, private renderer: Renderer2, private vcRef: ViewContainerRef) {}
 
   @HostListener('mouseenter')
   onMouseOver() {
-    this.renderer.setStyle(this.el.nativeElement, 'background-color', '#eee');
+    this.setElementBackgroundColor(this.BACKGROUND_COLOR_HOVER);
   }
 
   @HostListener('mouseleave')
   onMouseOut() {
-    this.renderer.setStyle(this.el.nativeElement, 'background-color', '#fff');
+    this.setElementBackgroundColor(this.BACKGROUND_COLOR_DEFAULT);
   }
 
   ngOnInit() {
-    this.renderer.setStyle(this.el.nativeElement, 'background-color', '#fff');
+    this.setElementBackgroundColor(this.BACKGROUND_COLOR_DEFAULT);
   }
 
   expand() {
@@ -54,13 +49,23 @@ export class NestedTableBodyRowDirective implements OnInit {
     this.isExpanded ? this.collapse() : this.expand();
   }
 
-  hide() {
-    this.isVisible = false;
-    this.renderer.setStyle(this.el.nativeElement, 'display', 'none');
-  }
-
   show() {
     this.isVisible = true;
-    this.renderer.setStyle(this.el.nativeElement, 'display', 'table-row');
+
+    this.setElementDisplayType('table-row');
+  }
+
+  hide() {
+    this.isVisible = false;
+
+    this.setElementDisplayType('none');
+  }
+
+  private setElementBackgroundColor(value: string) {
+    this.renderer.setStyle(this.el.nativeElement, 'background-color', value);
+  }
+
+  private setElementDisplayType(value: string) {
+    this.renderer.setStyle(this.el.nativeElement, 'display', value);
   }
 }
