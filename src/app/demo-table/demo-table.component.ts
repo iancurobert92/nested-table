@@ -46,30 +46,41 @@ export class DemoTableComponent implements OnInit {
   }
 
   onHeaderCheckboxValueChange() {
-    if (!this.headerRowCheckbox) return;
-
-    const checkbox = this.headerRowCheckbox.nativeElement;
-
-    this.bodyRowCheckboxes?.forEach((bodyCheckbox) => {
-      bodyCheckbox.nativeElement.checked = checkbox.checked;
-    });
+    this.selectAllRows();
   }
 
   onBodyRowCheckboxValueChange() {
-    const bodyRowCheckboxesValues = this.bodyRowCheckboxes?.map((item) => (item.nativeElement.checked ? 1 : 0)) ?? [];
-
-    const numOfCheckedRows = bodyRowCheckboxesValues.reduce((acc: number, value: number) => acc + value, 0);
-
-    const isAllChecked = numOfCheckedRows === this.nestedTableService.rows?.length;
-    const isIndeterminate = numOfCheckedRows >= 1 && !isAllChecked;
-
-    if (this.headerRowCheckbox) {
-      this.headerRowCheckbox.nativeElement.checked = isAllChecked;
-      this.headerRowCheckbox.nativeElement.indeterminate = isIndeterminate;
-    }
+    this.setHeaderCheckbox();
   }
 
   private setData = (value: Entity[]) => {
     this.data = value;
   };
+
+  private selectAllRows() {
+    const checkbox = this.headerRowCheckbox?.nativeElement;
+
+    this.bodyRowCheckboxes?.forEach((bodyCheckbox) => {
+      bodyCheckbox.nativeElement.checked = checkbox?.checked ?? false;
+    });
+  }
+
+  private setHeaderCheckbox() {
+    const numOfSelectedRows = this.getNumOfSelectedRows();
+
+    const isAllSelected = numOfSelectedRows === this.nestedTableService.rows?.length;
+
+    const isIndeterminate = numOfSelectedRows >= 1 && !isAllSelected;
+
+    if (this.headerRowCheckbox) {
+      this.headerRowCheckbox.nativeElement.checked = isAllSelected;
+      this.headerRowCheckbox.nativeElement.indeterminate = isIndeterminate;
+    }
+  }
+
+  private getNumOfSelectedRows(): number {
+    const bodyRowCheckboxesValues = this.bodyRowCheckboxes?.map((item) => (item.nativeElement.checked ? 1 : 0)) ?? [];
+
+    return bodyRowCheckboxesValues.reduce((acc: number, value: number) => acc + value, 0);
+  }
 }
