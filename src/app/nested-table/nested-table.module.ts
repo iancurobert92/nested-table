@@ -2,8 +2,9 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { NestedTableBodyRowDirective } from './nested-table-body-row.directive';
 import { NestedTableHeaderResizeDirective } from './nested-table-header-resize.directive';
+import { NestedTableDirective } from './nested-table.directive';
 
-const directives = [NestedTableBodyRowDirective, NestedTableHeaderResizeDirective];
+const directives = [NestedTableDirective, NestedTableBodyRowDirective, NestedTableHeaderResizeDirective];
 
 @NgModule({
   imports: [CommonModule],

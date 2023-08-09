@@ -1,1 +1,1 @@
-export * from './table.service';
+export * from './table-data.service';

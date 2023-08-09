@@ -1,5 +1,5 @@
 <div class="container pt-4">
-  <form [formGroup]="form">
+  <form>
     <input
       class="form-control mr-sm-2"
       type="search"
@@ -9,7 +9,7 @@
     />
   </form>
 
-  <table class="table table-bordered mt-3">
+  <table nestedTable class="table table-bordered mt-3">
     <thead>
       <tr>
         <th>
@@ -27,7 +27,7 @@
     </thead>
 
     <tbody>
-      <ng-container *ngFor="let row of searchResults">
+      <ng-container *ngFor="let row of data">
         <ng-container [ngTemplateOutlet]="rowTemplate" [ngTemplateOutletContext]="{ row, level: 0 }"></ng-container>
       </ng-container>
     </tbody>
@@ -35,16 +35,11 @@
     <ng-template #rowTemplate let-row="row" let-parent="parent" let-level="level">
       <tr nestedTableBodyRow #bodyRow="nestedTableBodyRow" [parent]="parent" [level]="level">
         <td>
-          <input
-            #bodyRowCheckbox
-            class="form-check-input"
-            type="checkbox"
-            (change)="onBodyRowCheckboxValueChange(bodyRow)"
-          />
+          <input #bodyRowCheckbox class="form-check-input" type="checkbox" (change)="onBodyRowCheckboxValueChange()" />
         </td>
         <td [ngStyle]="{ 'padding-left.px': level * 14 + 8 }">
           {{ row.name }}
-          <div class="btn btn-sm" (click)="toggleRow(bodyRow)" *ngIf="row.children">
+          <div class="btn btn-sm" (click)="onToggleRow(bodyRow)" *ngIf="row.children">
             <i class="bi" [ngClass]="bodyRow.isExpanded ? 'bi-arrow-down-short' : 'bi-arrow-right-short'"></i>
           </div>
         </td>
@@ -52,6 +47,7 @@
         <td>{{ row.email }}</td>
         <td>{{ row.phoneNo }}</td>
         <td>{{ row.companyName }}</td>
+
         <div class="body-row-options" *ngIf="!headerRowCheckbox.indeterminate && !headerRowCheckbox.checked">
           <button class="btn btn-sm btn-primary pe-auto me-2" *ngIf="level === 0">Edit</button>
           <button class="btn btn-sm btn-danger pe-auto">Delete</button>

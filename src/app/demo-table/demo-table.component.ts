@@ -1,28 +1,17 @@
-import {
-  AfterViewInit,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  OnInit,
-  QueryList,
-  ViewChild,
-  ViewChildren,
-} from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
-import { debounceTime } from 'rxjs';
+import { Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { debounceTime, delay, tap } from 'rxjs';
 import { NestedTableBodyRowDirective } from '../nested-table';
+import { NestedTableService } from '../nested-table/nested-table.service';
 import { Entity } from './models';
-import { TableService } from './services';
+import { TableDataService } from './services';
 
 @Component({
   selector: 'app-demo-table',
   templateUrl: './demo-table.component.html',
   styleUrls: ['./demo-table.component.scss'],
 })
-export class DemoTableComponent implements OnInit, AfterViewInit {
-  @ViewChildren(NestedTableBodyRowDirective)
-  rows?: QueryList<NestedTableBodyRowDirective>;
-
+export class DemoTableComponent implements OnInit {
   @ViewChild('headerRowCheckbox')
   headerRowCheckbox?: ElementRef<HTMLInputElement>;
 
@@ -31,37 +20,29 @@ export class DemoTableComponent implements OnInit, AfterViewInit {
 
   data: Entity[] = [];
 
-  searchResults: Entity[] = [];
+  readonly nameForm = this.fb.nonNullable.control('');
 
-  form = this.fb.group({
-    name: '',
-  });
-
-  get nameForm(): FormControl {
-    return this.form.get('name') as FormControl;
-  }
-
-  constructor(private tableService: TableService, private fb: FormBuilder, private cdRef: ChangeDetectorRef) {}
+  constructor(
+    private tableDataService: TableDataService,
+    private nestedTableService: NestedTableService,
+    private fb: FormBuilder
+  ) {}
 
   ngOnInit(): void {
-    this.tableService.getData().subscribe((value) => {
-      this.data = value;
-      this.searchResults = [...this.data];
-    });
+    this.tableDataService
+      .getData()
+      .pipe(
+        tap(this.setData),
+        delay(0),
+        tap(() => this.nestedTableService.collapseAll())
+      )
+      .subscribe();
 
-    this.form.valueChanges.pipe(debounceTime(500)).subscribe((formValue: any) => {
-      this.onSearch(formValue.name);
-    });
+    this.nameForm.valueChanges.pipe(debounceTime(500)).pipe(tap(this.tableDataService.filterByName)).subscribe();
   }
 
-  ngAfterViewInit(): void {
-    this.initRowsState();
-  }
-
-  toggleRow(rootRow: NestedTableBodyRowDirective) {
-    this.toggleRowsRecursively(rootRow);
-
-    rootRow.toggle();
+  onToggleRow(rootRow: NestedTableBodyRowDirective) {
+    this.nestedTableService.toggleRow(rootRow);
   }
 
   onHeaderCheckboxValueChange() {
@@ -74,12 +55,12 @@ export class DemoTableComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onBodyRowCheckboxValueChange(bodyRow: NestedTableBodyRowDirective) {
+  onBodyRowCheckboxValueChange() {
     const bodyRowCheckboxesValues = this.bodyRowCheckboxes?.map((item) => (item.nativeElement.checked ? 1 : 0)) ?? [];
 
     const numOfCheckedRows = bodyRowCheckboxesValues.reduce((acc: number, value: number) => acc + value, 0);
 
-    const isAllChecked = numOfCheckedRows === this.rows?.length;
+    const isAllChecked = numOfCheckedRows === this.nestedTableService.rows?.length;
     const isIndeterminate = numOfCheckedRows >= 1 && !isAllChecked;
 
     if (this.headerRowCheckbox) {
@@ -88,72 +69,7 @@ export class DemoTableComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private initRowsState() {
-    if (!this.rows) return;
-
-    for (let i = 0; i < this.rows.length; i++) {
-      const row = this.rows.get(i);
-
-      if (row?.parent) {
-        row.hide();
-      } else {
-        row?.collapse();
-      }
-    }
-  }
-
-  private toggleRowsRecursively(rootRow: NestedTableBodyRowDirective) {
-    if (!this.rows) return;
-
-    for (let i = 0; i < this.rows.length; i++) {
-      const row = this.rows.get(i);
-
-      if (row?.parent === rootRow) {
-        if (row.parent.isExpanded) {
-          row.hide();
-        } else {
-          row.show();
-        }
-
-        if (row.isExpanded) {
-          this.toggleRow(row);
-        }
-      }
-    }
-  }
-
-  private onSearch(name: string) {
-    name = name.trim();
-
-    this.searchResults = [];
-
-    if (name === '') {
-      this.searchResults = [...this.data];
-
-      this.cdRef.detectChanges();
-
-      this.initRowsState();
-
-      return;
-    }
-
-    this.data.forEach((entity: Entity) => this.searchEntityByName(name, entity));
-
-    this.cdRef.detectChanges();
-
-    this.initRowsState();
-  }
-
-  searchEntityByName(name: string, entity: any) {
-    const searchName = name.toLowerCase();
-    const entityName = entity.name.toLowerCase();
-
-    if (entityName.includes(searchName)) {
-      this.searchResults.push(entity);
-    }
-
-    if (entity.children) {
-      entity.children.forEach((child: any) => this.searchEntityByName(name, child));
-    }
-  }
+  private setData = (value: Entity[]) => {
+    this.data = value;
+  };
 }
