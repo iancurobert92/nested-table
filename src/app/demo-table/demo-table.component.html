@@ -16,10 +16,10 @@
           <input #headerRowCheckbox class="form-check-input" type="checkbox" (change)="onHeaderCheckboxValueChange()" />
         </th>
         <th nestedTableHeaderResize>Name</th>
-        <th>Type</th>
-        <th>Email</th>
-        <th>Phone Number</th>
-        <th>Company Name</th>
+        <th nestedTableHeaderResize>Type</th>
+        <th nestedTableHeaderResize>Email</th>
+        <th nestedTableHeaderResize>Phone Number</th>
+        <th nestedTableHeaderResize>Company Name</th>
         <div class="header-row-options" *ngIf="headerRowCheckbox.indeterminate || headerRowCheckbox.checked">
           <button class="btn btn-sm btn-danger pe-auto">Delete multiple</button>
         </div>
