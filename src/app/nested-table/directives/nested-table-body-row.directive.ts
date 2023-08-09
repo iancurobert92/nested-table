@@ -19,7 +19,7 @@ export class NestedTableBodyRowDirective implements OnInit {
 
   readonly BACKGROUND_COLOR_DEFAULT = '#fff';
 
-  readonly BACKGROUND_COLOR_HOVER = '#fff';
+  readonly BACKGROUND_COLOR_HOVER = '#eee';
 
   constructor(private el: ElementRef, private renderer: Renderer2, private vcRef: ViewContainerRef) {}
 
