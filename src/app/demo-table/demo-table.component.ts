@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren } fro
 import { FormBuilder } from '@angular/forms';
 import { debounceTime, delay, tap } from 'rxjs';
 import { NestedTableBodyRowDirective } from '../nested-table';
-import { NestedTableService } from '../nested-table/nested-table.service';
+import { NestedTableService } from '../nested-table/services/nested-table.service';
 import { Entity } from './models';
 import { TableDataService } from './services';
 

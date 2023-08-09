@@ -1,3 +1,3 @@
-export * from './nested-table-body-row.directive';
-export * from './nested-table-header-resize.directive';
+export * from './directives';
+export * from './services';
 export * from './nested-table.module';

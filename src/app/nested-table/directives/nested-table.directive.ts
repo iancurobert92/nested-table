@@ -1,6 +1,6 @@
 import { AfterContentInit, ContentChildren, Directive, QueryList } from '@angular/core';
 import { NestedTableBodyRowDirective } from './nested-table-body-row.directive';
-import { NestedTableService } from './nested-table.service';
+import { NestedTableService } from '../services/nested-table.service';
 
 @Directive({
   selector: '[nestedTable]',

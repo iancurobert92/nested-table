@@ -1,5 +1,5 @@
 import { Injectable, QueryList } from '@angular/core';
-import { NestedTableBodyRowDirective } from './nested-table-body-row.directive';
+import { NestedTableBodyRowDirective } from '../directives/nested-table-body-row.directive';
 
 @Injectable({
   providedIn: 'root',
